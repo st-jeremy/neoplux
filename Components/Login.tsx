@@ -2,12 +2,18 @@ import Head from 'next/head';
 import { Box } from '@chakra-ui/react';
 import Image from 'next/image';
 import { Input, Button } from '@chakra-ui/react';
-import { BsArrowRight } from 'react-icons/bs'
+import { BsArrowRight } from 'react-icons/bs';
+import Link from 'next/link';
 
-const Login = () => {
+import { signIn, signOut, useSession } from 'next-auth/react';
+
+export default function Login() {
+   useSession();
+   const loading = useSession()
+  
   return ( 
     <>
-    <Head>
+      <Head>
         <title>Neoplux</title>
         <meta name="description" content="Neoplux Swim Academy" />
         <link rel="icon" href="/logo.png" />
@@ -30,14 +36,29 @@ const Login = () => {
           <br />
           <br />
 
-          <Button rightIcon={<BsArrowRight />} colorScheme='blue' variant='outline' alignItems={'center'}>
-            Sign In
-          </Button>
+          { !loading && !useSession() &&(
+            <Link href='/api/auth/signin'>
+              <Button rightIcon={<BsArrowRight />} colorScheme='blue' variant='outline' alignItems={'center'} onClick={e =>{
+                e.preventDefault();
+                signIn();
+              }} >
+                Log In
+              </Button>
+            </Link>
+          )}
+
+          {useSession &&(
+            <Link href='/api/auth/signout'>
+              <Button rightIcon={<BsArrowRight />} colorScheme='blue' variant='outline' onClick={e =>{
+                e.preventDefault();
+                signOut();
+              }} >
+                Log Out
+              </Button>
+            </Link>
+          )}
         </Box>
       </main>
-
     </>
-   );
+  )
 }
- 
-export default Login;
